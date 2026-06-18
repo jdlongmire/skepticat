@@ -2,6 +2,8 @@
 
 A catalog of **SkeptiCat** infographics — a biblical Christian Designist apologetics series featuring SkeptiCat, a lab-coated skeptic cat who audits the claims of naturalism, deep time, and macroevolution against logic, evidence, and Scripture.
 
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+
 Created by **JD Longmire** · [oddXian.com](https://oddXian.com)  
 Browse as a gallery: **https://jdlongmire.github.io/skepticat/**
 
