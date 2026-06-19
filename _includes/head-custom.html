@@ -1,0 +1,108 @@
+<!-- SkeptiCat lightbox: open infographics in an overlay so closing returns to the gallery -->
+<style>
+  #scat-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 24px;
+    box-sizing: border-box;
+    cursor: zoom-out;
+  }
+  #scat-lightbox.open { display: flex; }
+  #scat-lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: 0 6px 40px rgba(0, 0, 0, 0.6);
+    cursor: default;
+  }
+  #scat-lightbox .scat-close {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 28px;
+    line-height: 44px;
+    text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #scat-lightbox .scat-close:hover { background: rgba(255, 255, 255, 0.25); }
+</style>
+<script>
+  (function () {
+    var box, img, isOpen = false;
+
+    function build() {
+      box = document.createElement('div');
+      box.id = 'scat-lightbox';
+      box.setAttribute('role', 'dialog');
+      box.setAttribute('aria-modal', 'true');
+
+      var close = document.createElement('button');
+      close.className = 'scat-close';
+      close.setAttribute('aria-label', 'Close');
+      close.innerHTML = '&times;';
+
+      img = document.createElement('img');
+      img.alt = '';
+
+      box.appendChild(img);
+      box.appendChild(close);
+      document.body.appendChild(box);
+
+      // Click on backdrop (not the image itself) closes.
+      box.addEventListener('click', function (e) {
+        if (e.target === img) return;
+        closeBox();
+      });
+    }
+
+    function openBox(src, alt) {
+      if (!box) build();
+      img.src = src;
+      img.alt = alt || '';
+      box.classList.add('open');
+      isOpen = true;
+      // Push a history entry so the device Back button closes the
+      // overlay instead of leaving the site.
+      history.pushState({ scatLightbox: true }, '');
+    }
+
+    function closeBox(fromPop) {
+      if (!isOpen) return;
+      box.classList.remove('open');
+      img.src = '';
+      isOpen = false;
+      // If closed via UI (not the Back button), unwind the history entry.
+      if (!fromPop) history.back();
+    }
+
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a');
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (!/\.(png|jpe?g|gif|webp|svg)$/i.test(href)) return;
+      e.preventDefault();
+      var label = a.querySelector('img');
+      openBox(a.href, label ? label.alt : '');
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (isOpen && (e.key === 'Escape' || e.key === 'Esc')) closeBox();
+    });
+
+    window.addEventListener('popstate', function () {
+      if (isOpen) closeBox(true);
+    });
+  })();
+</script>
